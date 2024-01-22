@@ -7,7 +7,7 @@ toolchain go1.21.5
 require (
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/papireio/go-users-service v1.1.0
+	github.com/papireio/go-users-service v1.2.0
 	github.com/sethvargo/go-envconfig v1.0.0
 )
 
