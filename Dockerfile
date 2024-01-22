@@ -6,7 +6,7 @@ RUN make vendor \
     && make build \
     && mkdir -p /usr/app \
     && cp ./target/go-api /usr/app \
-    && cp -r ./swagger-ui /usr/app
+    && cp -r ./docs /usr/app
 
 WORKDIR /usr/app
 RUN rm -rf /usr/src
