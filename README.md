@@ -1,4 +1,4 @@
-# goapi
+# go-api
 
 Go API gateway
 

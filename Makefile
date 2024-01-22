@@ -1,6 +1,6 @@
 V := @
 
-NAME := goapi
+NAME := go-api
 OUT_DIR := ./target
 
 MAIN_OUT := $(OUT_DIR)/$(NAME)
@@ -23,7 +23,3 @@ vendor:
 	$(V)go mod tidy -go=1.21 && go mod tidy -go=1.21
 	$(V)go mod tidy
 	$(V)go mod vendor
-
-.PHONY: swagger
-swagger:
-	swagger generate spec -m -x vendor -o swagger-ui/swagger.json
