@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/papireio/go-api/internal/clients"
 	"github.com/papireio/go-api/internal/env"
-	"github.com/papireio/go-api/internal/routes/authentication"
+	"github.com/papireio/go-api/internal/middlewares"
+	"github.com/papireio/go-api/internal/routes/auth"
+	"github.com/papireio/go-api/internal/routes/user"
 	"github.com/sethvargo/go-envconfig"
 	"log"
 )
@@ -32,7 +34,8 @@ func main() {
 		AllowHeaders: []string{"*"},
 	}))
 
-	r.POST("/sign/in", authentication.SignIn(ctx, grpcClients))
+	r.GET("/user", middlewares.AuthMiddleware(ctx, grpcClients), user.GetUser(ctx, grpcClients))
+	r.POST("/sign/in", auth.SignIn(ctx, grpcClients))
 
 	if err := r.Run(fmt.Sprintf("0.0.0.0:%v", config.Port)); err != nil {
 		log.Fatalln(err, "Fatal Error: Running Server")
