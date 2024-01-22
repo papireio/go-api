@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/papireio/go-api/internal/clients"
 	"github.com/papireio/go-api/internal/validation"
+	session "github.com/papireio/go-session-service/pkg/api/grpc"
 	users "github.com/papireio/go-users-service/pkg/api/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -45,10 +46,22 @@ func SignIn(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.C
 				// TODO: log error
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
-		} else {
-			c.JSON(http.StatusOK, &SignInResponse{
-				SessionToken: r.SessionToken,
-			})
+
+			return
 		}
+
+		if _, err := grpcClients.Session.CreateSession(ctx, &session.CreateSessionRequest{
+			SessionToken: r.SessionToken,
+			Uuid:         r.Uuid,
+		}); err != nil {
+			//	TODO: remove created user
+			c.AbortWithStatus(http.StatusInternalServerError)
+
+			return
+		}
+
+		c.JSON(http.StatusOK, &SignInResponse{
+			SessionToken: r.SessionToken,
+		})
 	}
 }
