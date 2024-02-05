@@ -34,8 +34,10 @@ func main() {
 		AllowHeaders: []string{"*"},
 	}))
 
-	r.GET("/user", middlewares.AuthMiddleware(ctx, grpcClients), user.GetUser(ctx, grpcClients))
 	r.POST("/sign/in", auth.SignIn(ctx, grpcClients))
+	r.POST("/sign/up", auth.SignUp(ctx, grpcClients))
+
+	r.GET("/user", middlewares.AuthMiddleware(ctx, grpcClients), user.GetUser(ctx, grpcClients))
 
 	if err := r.Run(fmt.Sprintf("0.0.0.0:%v", config.Port)); err != nil {
 		log.Fatalln(err, "Fatal Error: Running Server")

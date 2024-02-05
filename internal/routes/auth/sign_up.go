@@ -12,16 +12,16 @@ import (
 	"net/http"
 )
 
-type SignInRequestBody struct {
+type SignUpRequestBody struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=7"`
 }
 
-type SignInResponse struct {
+type SignUpResponse struct {
 	SessionToken string `json:"session_token"`
 }
 
-func SignIn(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.Context) {
+func SignUp(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var b SignInRequestBody
 		if err := c.ShouldBindJSON(&b); err != nil {
@@ -29,7 +29,7 @@ func SignIn(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.C
 			return
 		}
 
-		r, err := grpcClients.Users.CreateSession(ctx, &users.CreateSessionRequest{
+		r, err := grpcClients.Users.CreateUser(ctx, &users.CreateUserRequest{
 			Email:    b.Email,
 			Password: b.Password,
 		})
@@ -38,10 +38,8 @@ func SignIn(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.C
 			switch e.Code() {
 			case codes.InvalidArgument:
 				c.AbortWithStatus(http.StatusBadRequest)
-			case codes.NotFound:
-				c.AbortWithStatus(http.StatusUnauthorized)
-			case codes.PermissionDenied:
-				c.AbortWithStatus(http.StatusUnauthorized)
+			case codes.AlreadyExists:
+				c.AbortWithStatus(http.StatusConflict)
 			default:
 				// TODO: log error
 				c.AbortWithStatus(http.StatusInternalServerError)
@@ -54,7 +52,7 @@ func SignIn(ctx context.Context, grpcClients *clients.GrpcClients) func(c *gin.C
 			SessionToken: r.SessionToken,
 			Uuid:         r.Uuid,
 		}); err != nil {
-			//	TODO: remove created user
+			//	TODO: remove recently created user
 			c.AbortWithStatus(http.StatusInternalServerError)
 
 			return

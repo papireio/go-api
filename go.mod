@@ -9,7 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/papireio/go-session-service v1.0.0
-	github.com/papireio/go-users-service v1.2.0
+	github.com/papireio/go-users-service v1.2.1
 	github.com/sethvargo/go-envconfig v1.0.0
 	google.golang.org/grpc v1.60.1
 )
